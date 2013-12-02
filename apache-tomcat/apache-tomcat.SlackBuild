@@ -70,9 +70,15 @@ rm -f bin/*.exe bin/*.bat
 cp -rf bin lib $PKG/usr/share/tomcat/
 
 cp -f conf/* $PKG/etc/tomcat/
-cp -f $CWD/tomcat-java.conf $PKG/etc/tomcat/tomcat-java.conf
+cp -f $CWD/tomcat-java.conf $PKG/etc/tomcat/tomcat-java.conf.new
 
-cp -rf webapps ${PKG}${TOMCAT_HOME}/webapps
+if [ -d /var/lib/tomcat/webapps ]; then
+    cp -rf webapps ${PKG}${TOMCAT_HOME}/webapps.new
+    chmod -R 775 ${PKG}${TOMCAT_HOME}/webapps.new
+else
+    cp -rf webapps ${PKG}${TOMCAT_HOME}/webapps
+    chmod -R 775 ${PKG}${TOMCAT_HOME}/webapps
+fi
 
 ln -s /var/log/tomcat ${PKG}${TOMCAT_HOME}/logs
 ln -s /var/tmp/tomcat ${PKG}${TOMCAT_HOME}/temp
@@ -89,7 +95,7 @@ chmod -R 755 ${PKG}/var/log/tomcat
 
 chown -R tomcat:tomcat ${PKG}${TOMCAT_HOME}
 chmod -R 755 ${PKG}${TOMCAT_HOME}
-chmod -R 775 ${PKG}${TOMCAT_HOME}/webapps
+#chmod -R 775 ${PKG}${TOMCAT_HOME}/webapps
 
 chown root:tomcat $PKG/etc/tomcat
 chown tomcat:tomcat $PKG/etc/tomcat/tomcat-users.xml
